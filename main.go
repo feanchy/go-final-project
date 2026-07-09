@@ -1,20 +1,9 @@
 package main
 
-import (
-	"net/http"
-	"os"
-)
+import "go1f/pkg/server"
 
 func main() {
-	webDir := "./web"
-	port := os.Getenv("TODO_PORT")
-	if port == "" {
-		port = "7540"
-	}
-
-	http.Handle("/", http.FileServer(http.Dir(webDir)))
-
-	err := http.ListenAndServe(":"+port, nil)
+	err := server.Run()
 	if err != nil {
 		panic(err)
 	}
