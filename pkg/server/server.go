@@ -10,12 +10,18 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/feanchy/go-final-project/pkg/api"
 )
 
 func Run() error {
+
 	port := 7540
 
 	mux := http.NewServeMux()
+
+	api.Init(mux)
+
 	mux.Handle("/", http.FileServer(http.Dir("web")))
 
 	srv := &http.Server{
