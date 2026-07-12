@@ -49,9 +49,17 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 
 	case "y":
+
+		if len(parts) != 1 {
+			return "", errors.New("invalid repeat format")
+		}
+
+		if parts[0] == "" {
+			return "", errors.New("invalid repeat format")
+		}
+
 		for {
 			data = data.AddDate(1, 0, 0)
-
 			if data.After(now) {
 				break
 			}
