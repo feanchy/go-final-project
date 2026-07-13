@@ -43,7 +43,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 		for {
 			data = data.AddDate(0, 0, days)
-			if data.After(now) {
+			if afterNow(data, now) {
 				break
 			}
 		}
@@ -60,7 +60,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 		for {
 			data = data.AddDate(1, 0, 0)
-			if data.After(now) {
+			if afterNow(data, now) {
 				break
 			}
 		}
@@ -71,6 +71,10 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 	//---
 	return data.Format(dateFormat), nil
+}
+
+func afterNow(a, b time.Time) bool {
+	return a.Format(dateFormat) > b.Format(dateFormat)
 }
 
 func nextDateHandler(w http.ResponseWriter, r *http.Request) {

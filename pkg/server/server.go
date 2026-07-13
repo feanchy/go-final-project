@@ -14,9 +14,9 @@ import (
 	"github.com/feanchy/go-final-project/pkg/api"
 )
 
-func Run() error {
+func Run(port string) error {
 
-	port := 7540
+	// port := 7540
 
 	mux := http.NewServeMux()
 
@@ -25,7 +25,7 @@ func Run() error {
 	mux.Handle("/", http.FileServer(http.Dir("web")))
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", port),
+		Addr:         fmt.Sprintf(":%s", port),
 		Handler:      mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

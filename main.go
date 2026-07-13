@@ -8,6 +8,12 @@ import (
 )
 
 func main() {
+	port := os.Getenv("TODO_PORT")
+	if port == "" {
+		port = "7540"
+	}
+	log.Println("PORT:", port)
+
 	dbFile := os.Getenv("TODO_DBFILE")
 	if dbFile == "" {
 		dbFile = "scheduler.db"
@@ -20,7 +26,7 @@ func main() {
 
 	defer db.Close()
 
-	err = server.Run()
+	err = server.Run(port)
 	if err != nil {
 		log.Fatal(err)
 	}
