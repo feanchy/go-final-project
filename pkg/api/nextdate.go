@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const dateFormat = "20060102"
+const dateFormat string = "20060102"
 
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	data, err := time.Parse(dateFormat, dstart)
