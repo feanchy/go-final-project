@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -28,7 +29,13 @@ FROM scheduler ORDER BY date LIMIT ?
 const searchTasks = `SELECT id, date, title, comment, repeat FROM scheduler
 WHERE title LIKE ? OR comment LIKE ? ORDER BY date LIMIT ?`
 
-const getTaskDB = `SELECT `
+const getTaskDB = `SELECT id, date, title, comment, repeat FROM scheduler
+	WHERE id = ?`
+
+const updateTaskDB = `UPDATE scheduler 
+	SET date = ?, title = ?, comment = ?, repeat = ? WHERE id = ?`
+
+const deleteTaskDB = `DELETE FROM scheduler WHERE id = ?`
 
 // Функция для создания задачи
 func AddTask(ctx context.Context, task *Task) (int64, error) {
@@ -98,6 +105,51 @@ func Tasks(ctx context.Context, limit int, search string) ([]*Task, error) {
 	return tasks, nil
 }
 
-func getTask() {
+func GetTask(ctx context.Context, id string) (*Task, error) {
+	task := &Task{}
 
+	err := db.QueryRowContext(ctx, getTaskDB, id).Scan(
+		&task.ID,
+		&task.Date,
+		&task.Title,
+		&task.Comment,
+		&task.Repeat,
+	)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("Задача не найдена")
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("get task: %w", err)
+	}
+
+	return task, nil
+}
+
+func UpdateTask(ctx context.Context, task *Task) error {
+	res, err := db.ExecContext(
+		ctx,
+		updateTaskDB,
+		task.Date,
+		task.Title,
+		task.Comment,
+		task.Repeat,
+		task.ID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("update task: %w", err)
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		fmt.Errorf("rows affected: %w", err)
+	}
+
+	if count == 0 {
+		return fmt.Errorf("задача не найдена")
+	}
+
+	return nil
 }
