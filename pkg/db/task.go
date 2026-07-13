@@ -65,6 +65,9 @@ func Tasks(ctx context.Context, limit int, search string) ([]*Task, error) {
 			pattern,
 			limit,
 		)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		rows, err = db.QueryContext(
 			ctx,
@@ -144,7 +147,26 @@ func UpdateTask(ctx context.Context, task *Task) error {
 
 	count, err := res.RowsAffected()
 	if err != nil {
-		fmt.Errorf("rows affected: %w", err)
+		return fmt.Errorf("rows affected: %w", err)
+	}
+
+	if count == 0 {
+		return fmt.Errorf("задача не найдена")
+	}
+
+	return nil
+}
+
+func DeleteTask(ctx context.Context, id int64) error {
+
+	res, err := db.ExecContext(ctx, deleteTaskDB, id)
+	if err != nil {
+		return fmt.Errorf("delete task: %w", err)
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %w", err)
 	}
 
 	if count == 0 {
