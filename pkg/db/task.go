@@ -37,6 +37,8 @@ const updateTaskDB = `UPDATE scheduler
 
 const deleteTaskDB = `DELETE FROM scheduler WHERE id = ?`
 
+const updateDateDB = `UPDATE scheduler SET date = ? WHERE id = ?`
+
 // Функция для создания задачи
 func AddTask(ctx context.Context, task *Task) (int64, error) {
 	res, err := db.ExecContext(ctx, addTaskDB, task.Date, task.Title, task.Comment, task.Repeat)
@@ -173,5 +175,20 @@ func DeleteTask(ctx context.Context, id int64) error {
 		return fmt.Errorf("задача не найдена")
 	}
 
+	return nil
+}
+
+func UpdateDate(ctx context.Context, date string, id int64) error {
+	res, err := db.ExecContext(ctx, updateDateDB, date, id)
+	if err != nil {
+		return fmt.Errorf("update date task: %w", err)
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %w", err)
+	}
+	if count == 0 {
+		return fmt.Errorf("задача не найдена")
+	}
 	return nil
 }
