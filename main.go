@@ -5,9 +5,16 @@ import (
 	"go1f/pkg/server"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println(".env file not found")
+	}
+
 	port := os.Getenv("TODO_PORT")
 	if port == "" {
 		port = "7540"
@@ -19,7 +26,7 @@ func main() {
 		dbFile = "scheduler.db"
 	}
 
-	err := db.Init(dbFile)
+	err = db.Init(dbFile)
 	if err != nil {
 		log.Fatal(err)
 	}
